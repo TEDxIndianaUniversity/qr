@@ -3,14 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QR Code Generator</title>
+    <title>QR Code Generator</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <h1>Generate QR</h1>
-    <input type="text" id="url" placeholder="Enter URL">
-    <button onclick="generateQR()">Generate QR</button>
+    <input type="text" id="event" placeholder="Enter Event Name"> 
+    <select id="source" title="Select Source">
+        <option value="qr">QR</option>
+        <option value="Luddy%20Org%20Fair">Luddy Org Fair</option>
+        <option value="Involvement%20Fair">Involvement Fair</option>
+        <option value="Tabling">Tabling</option>
+        <option value="First%20Thursdays">First Thursdays</option>
+        <option value="custom">Custom</option>
+    </select>
+    <input type="text" id="customSource" placeholder="Enter Custom Source" class="hidden">
+    <button type="button" onclick="generateQR()">Generate QR</button>
     <div id="qr"></div>
     <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-    <script src="script.js"></script>
+    <script>
+        document.getElementById('source').addEventListener('change', function() {
+            const customSourceInput = document.getElementById('customSource');
+            if (this.value === 'custom') {
+                customSourceInput.style.display = 'block';
+            } else {
+                customSourceInput.style.display = 'none';
+            }
+        });
+
+        function generateQR() {
+            const eventInput = document.getElementById('event').value;
+            const encodedEvent = encodeURIComponent(eventInput);
+            let sourceInput = document.getElementById('source').value;
+            if (sourceInput === 'custom') {
+                sourceInput = encodeURIComponent(document.getElementById('customSource').value);
+            }
+            const url = `https://www.tedxiu.com/contact?e=${encodedEvent}&s=${sourceInput}`;
+            const qrContainer = document.getElementById('qr');
+            qrContainer.innerHTML = '';
+            QRCode.toCanvas(document.createElement('canvas'), url, function (error, canvas) {
+                if (error) console.error(error);
+                qrContainer.appendChild(canvas);
+            });
+        }
+    </script>
 </body>
 </html>
