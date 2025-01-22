@@ -14,7 +14,7 @@ function generateQR() {
     if (sourceInput === 'custom') {
         sourceInput = encodeURIComponent(document.getElementById('customSource').value);
     }
-    const url = `https://www.tedxiu.com/contact?e=${sourceInput}&s=${sourceInput}`;
+    const url = `https://www.tedxiu.com/contact?e=${sourceInput}&s=qr`;
     const qrContainer = document.getElementById('qr');
     qrContainer.innerHTML = '';
     QRCode.toCanvas(document.createElement('canvas'), url, { width: 400, height: 400 }, function (error, canvas) {
