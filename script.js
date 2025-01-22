@@ -8,13 +8,11 @@ document.getElementById('source').addEventListener('change', function() {
 });
 
 function generateQR() {
-    const eventInput = document.getElementById('event').value;
-    const encodedEvent = encodeURIComponent(eventInput);
     let sourceInput = document.getElementById('source').value;
     if (sourceInput === 'custom') {
         sourceInput = encodeURIComponent(document.getElementById('customSource').value);
     }
-    const url = `https://www.tedxiu.com/contact?e=${sourceInput}&s=${sourceInput}`;
+    const url = `https://www.tedxiu.com/contact?e=${sourceInput}&s=qr`;
     const qrContainer = document.getElementById('qr');
     qrContainer.innerHTML = '';
     QRCode.toCanvas(document.createElement('canvas'), url, { width: 400, height: 400 }, function (error, canvas) {
@@ -24,7 +22,7 @@ function generateQR() {
 
     document.getElementById('formContainer').style.display = 'none';
     document.getElementById('qrContainer').style.display = 'block';
-    document.getElementById('eventName').innerText = `Event: ${eventInput} (${sourceInput})`;
+    document.getElementById('eventName').innerText = `Event: ${sourceInput}`;
 }
 
 function showForm() {
