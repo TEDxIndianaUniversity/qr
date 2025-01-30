@@ -11,6 +11,8 @@ function generateQR() {
     let sourceInput = document.getElementById('source').value;
     if (sourceInput === 'custom') {
         sourceInput = encodeURIComponent(document.getElementById('customSource').value);
+    } if (sourceInput === 'qr') {
+        return;
     }
     const url = `https://www.tedxiu.com/contact?e=${sourceInput}&s=qr`;
     const qrContainer = document.getElementById('qr');
