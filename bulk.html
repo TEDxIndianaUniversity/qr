@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8" />
+    <title>Bulk QR-Code Generator</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <!-- <link href="https://assets.website-files.com/6246ac7990532afc2998139b/css/bulkr.61864f60c.css" rel="stylesheet" type="text/css" /> -->
+    <style>
+        textarea { resize: vertical; }
+        iframe {width: 70vw; height: 80vh}
+    </style>
+</head>
+
+<body>
+    <div class="section wf-section">
+        <div class="container">
+            <h1>Bulk Poster Generator</h1>
+            <h2>Generate Unique QR-Codes for Any Poster</h2>
+        </div>
+    </div>
+    <div class="section grow wf-section">
+        <div class="container" style="display: flex; flex-direction: row;gap:15px;">
+            <div class="form w-form">
+                <form id="qr-form">
+                    <div class="form-line">
+                        <div class="text-field-wrapper">
+                            <label for="codeSize" class="field-label">Code size (pixels)</label>
+                            <input type="number" class="text-field w-input" min="40" id="codeSize" value="43"/>
+                        </div>
+                        <div class="text-field-wrapper">
+                            <label for="numberOfCodes" class="field-label">Quantity</label>
+                            <input type="number" class="text-field w-input" min="1" value="10" id="numberOfCodes" />
+                        </div>
+                        <div hidden class="text-field-wrapper">
+                            <label for="file">(File Upload Currently Unsupported)</label>
+                            <input type="file" id="file" name="file" accept=".svg,.png">
+                        </div>
+                        
+                        <div class="text-field-wrapper x-qr-field" onchange="generateQRcodes()">
+                            <label>X position:</label><br>
+                            <input id="horizontal" type="range" min="0" max="300" name="xQr" value="158">
+                        </div>
+                
+                        <div class="text-field-wrapper y-qr-field" onchange="generateQRcodes()">
+                            <label>Y position:</label>
+                            <input id="vertical" type="range" min="0" max="300" name="yQr" value="177">
+                        </div>
+
+                        <div class="text-field-wrapper">
+                            <label for="prefixTxt" class="field-label">URL to Redirect to:</label>
+                            <input type="text" class="text-field w-input" id="prefixTxt" />
+                        </div>
+                        <div hidden class="text-field-wrapper">
+                            <label for="inTxt" class="field-label">Code values</label>
+                            <textarea id="inTxt" class="text-field area w-input" placeholder="Enter each text on a new line:"></textarea>
+                        </div>
+                        <a href="#" class="button w-button" onclick="generateQRcodes()">Download QR-Codes</a>
+                    </div>
+                    
+                </form>
+            </div>
+            <iframe class="preview" id="preview" title="Poster Preview" src="" width="40%" height="600px"></iframe>
+        </div>
+    </div>
+    <script src="./scripts/qrcode-svg.js"></script>
+    <script src="./scripts/svg2pdf.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- <script src="./scripts/jspdf.js"></script> -->
+    <!-- <script src="https://unpkg.com/jspdf@2.5.2/dist/jspdf.umd.min.js"></script> -->
+    <!-- <script src="https://unpkg.com/jspdf@2.5.2/dist/jspdf.umd.min.js"></script> -->
+    <script>
+        const { jsPDF } = window.jspdf;
+        window.html2canvas = html2canvas;
+        async function svg2png(svg, width = 1000, height = 1000) {
+            const img = new Image();
+            img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+
+            await new Promise((resolve, reject) => {
+                img.onload = resolve;
+                img.onerror = reject;
+            });
+
+            const canvas = document.createElement("canvas");
+            [canvas.width, canvas.height] = [width, height];
+
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+
+            return canvas.toDataURL("image/png");
+        }
+        function generateQRcodes() {
+            document.getElementById('preview').removeAttribute('src');
+            document.getElementById('preview').srcdoc = `<!DOCTYPE html><p>Loading...</p></html>`;
+            const prefix = document.getElementById("prefixTxt").value;
+            const width = document.getElementById("codeSize").value;
+            const height = width;
+            const qrXPosition = document.getElementById('horizontal').value;
+            const qrYPosition = document.getElementById('vertical').value;
+            const numberOfCodes = document.getElementById("numberOfCodes").value;
+            let poster = document.getElementById("file").files[0];
+            // const allText = document.getElementById("inTxt").value;
+            // const codes = allText.match(/[^\n\r]+/g);
+            let codes = [];
+            for (let index = 0; index < numberOfCodes; index++) {
+                codes.push(self.crypto.randomUUID());
+            }
+            // console.log(codes);
+
+            if (!codes || codes.length === 0) return;
+
+
+            for (const code of codes) {
+                qrcode = new QRCode({
+                    content:  `${prefix}?utm_source=poster&utm_content=${code}`,
+                    padding: 2,
+                    width: width,
+                    height: height,
+                    color: "black",
+                    background: "none",
+                    ecl: "L"
+                });
+                
+                const qrElement = document.createElement('image');
+                qrElement.src = qrcode.svg();
+                const poster = document.createElement('image');
+                poster.src = 'images/1.png';
+                var doc = new jsPDF();  
+                svg2png(qrcode.svg()).then((img) => {
+                    doc.addImage('images/1.png', 'PNG',0, 0, 210, 270);
+                    doc.addImage(img, 'JPEG', Number(qrXPosition), Number(qrYPosition), Number(width), Number(width));
+                    doc.addPage('letter','p');
+                    document.getElementById('preview').removeAttribute('srcdoc');
+                    document.getElementById('preview').src = doc.output('bloburi');
+                });
+            }
+            
+        }
+    </script>
+</body>
+</html>
