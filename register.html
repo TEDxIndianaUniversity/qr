@@ -64,7 +64,18 @@
                 let params = new URLSearchParams(decodeURI(result['data'].split('?')[1]));
                 if (params.has('utm_content')) {
                     UTM_CONTENT = params.get('utm_content');
-                    navigator.geolocation.getCurrentPosition(registerPoster, error, options);
+                    
+                    navigator.permissions.query({ name: "geolocation" }).then((result) => {
+                        if (result.state === "granted") {
+                            navigator.geolocation.getCurrentPosition(registerPoster, error, options);
+                        } else if (result.state === "prompt") {
+                            navigator.geolocation.getCurrentPosition(registerPoster, error, options);
+                        } else {
+                            msg.innerText = "Error: Geolocation permission is required to know where a poster is. Please adjust site and/or device settings to allow geolocation access."
+                            msg.style.display = "flex";
+                        }
+                        // Don't do anything if the permission was denied.
+                    });
                 } else {
                     msg.innerText = "Error: this QR doesn't contain the 'utm_content' parametre, so it can't be registered."
                     msg.style.display = "flex";
