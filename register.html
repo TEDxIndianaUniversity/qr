@@ -105,6 +105,7 @@
 
         function submitTextarea() {
             document.getElementById('location-description').style.display = 'none';
+            document.getElementById('form-next-button').style.display = 'none';
             msg.innerText = "Registering..."
             msg.style.display = "flex";
             navigator.geolocation.getCurrentPosition(registerPoster, error, options);
@@ -144,8 +145,10 @@
                     navigator.permissions.query({ name: "geolocation" }).then((result) => {
                         if (result.state === "granted") {
                             document.getElementById('location-description').style.display = 'block';
+                            document.getElementById('form-next-button').style.display = 'block';
                         } else if (result.state === "prompt") {
                             document.getElementById('location-description').style.display = 'block';
+                            document.getElementById('form-next-button').style.display = 'block';
                         } else {
                             msg.innerText = "Error: Geolocation permission is required to know where a poster is. Please adjust site and/or device settings to allow geolocation access."
                             msg.style.display = "flex";
