@@ -37,7 +37,7 @@
                         
                         <div class="text-field-wrapper x-qr-field" onchange="generateQRcodes()">
                             <label>X position:</label><br>
-                            <input id="horizontal" type="range" min="0" max="300" name="xQr" value="158">
+                            <input id="horizontal" type="range" min="0" max="300" name="xQr" value="162">
                         </div>
                 
                         <div class="text-field-wrapper y-qr-field" onchange="generateQRcodes()">
@@ -123,10 +123,10 @@
                 const qrElement = document.createElement('image');
                 qrElement.src = qrcode.svg();
                 const poster = document.createElement('image');
-                poster.src = 'images/1.png';
+                // poster.src = 'images/3.png';
                 var doc = new jsPDF();  
                 svg2png(qrcode.svg()).then((img) => {
-                    doc.addImage('images/1.png', 'PNG',0, 0, 210, 270);
+                    doc.addImage('images/3  .png', 'PNG', 2, 0, 212, 270);
                     doc.addImage(img, 'JPEG', Number(qrXPosition), Number(qrYPosition), Number(width), Number(width));
                     doc.addPage('letter','p');
                     document.getElementById('preview').removeAttribute('srcdoc');
