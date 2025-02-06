@@ -55,6 +55,8 @@
 
         function error(err) {
             console.warn(`ERROR(${err.code}): ${err.message}`);
+            msg.innerText = "Error: Geolocation permission is required to know where a poster is. Please adjust site and/or device settings to allow geolocation access."
+            msg.style.display = "flex";
         }
         const msg = document.getElementById('status-box');
 
