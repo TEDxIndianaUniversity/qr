@@ -10,6 +10,12 @@
             color-scheme: dark;
             font-family: 'Inter', sans-serif;
         }
+        .tedx-button{ text-decoration: none; color: white; justify-content: center; align-items: center; gap: 10px; border-radius: 0.8rem; border: 2px solid rgba(97, 97, 97, 0.5); background: rgba(74, 74, 74, 0.5); width: max-content; height: max-content; padding: 10px 15px; &.more-padding{ width: 180px; height: 130px; @media screen and (max-width: 750px){ width: 200px!important; height: 60px!important; padding: 10px 5px!important;}} &.medium-padding{ width: 150px; height: 100px;}  &::after{ display: inline-flex; position: relative; color: white; font-weight: 700; height: 100%; content: " \2192" / " "; padding: 0px 2.5px; align-items: center;} &.arrow-up{ .button__label{ &::after{ margin-left: 5px; content: "\2191" / " ";}}} &.no-arrow{ &::after{ display: none; margin: 0; padding: 0; content: "";}} &.red{ background: rgba(178, 57, 57, 0.75); border: 2px solid rgba(77, 24, 24, 0.5); &:hover{ background: rgba(178, 57, 57, 0.85);} &:active{ background: rgba(178, 57, 57, 1);}} &.white{ background: rgba(255, 255, 255, 1); border: 2px solid rgba(77, 24, 24, 0.5);}}
+        .message-box {
+            width: 100%;
+            max-width: 500px;
+            display: none;
+        }
     </style>
 </head>
 
@@ -17,7 +23,7 @@
     <h1>Scan to Register</h1>
     <p>Quickly register QRs with <a href="https://www.tedxiu.com/p" target="_blank" rel="noopener">TEDx Analytical Services</a></p>
     <video id="qr-scanner"></video>
-
+    <p id="status-box" class="message-box tedx-button no-arrow">Loading...</p>
 
     <script src="./scripts/qr-scanner.umd.min.js"></script>
     <script>
@@ -29,29 +35,36 @@
             maximumAge: 0,
         };
 
+        let UTM_CONTENT = "";
+
         async function registerPoster(pos) {
             const crd = pos.coords;
             console.log(`Accuracy: More or less ${crd.accuracy} meters.`);
-
-            // const head = new Headers();
-            // head.append("Content-Type", "application/json");
-            // const desc = "TEST";
-            // const response = await fetch(`https://www.tedxiu.com/_functions/registerposter?poster=${result['data']}&long=${crd.longitude}&lat=${crd.latitude}&desc=${desc}`, {
-            //     method: "POST",
-            //     headers: head
-            // });
-
+            console.log(`Poster id: ${UTM_CONTENT}`);
+            const head = new Headers();
+            head.append("Content-Type", "application/json");
+            const desc = "TEST";
+            const response = await fetch(`https://www.tedxiu.com/_functions/registerposter?poster=${UTM_CONTENT}&long=${crd.longitude}&lat=${crd.latitude}&desc=${desc}`, {
+                method: "POST",
+                headers: head
+            });
         }
 
         function error(err) {
             console.warn(`ERROR(${err.code}): ${err.message}`);
         }
+        const msg = document.getElementById('status-box');
 
         const qrScanner = new QrScanner(
             videoElem, result => {
-                console.log('decoded qr code:', result);
                 qrScanner.stop();
-                // navigator.geolocation.getCurrentPosition(registerPoster, error, options);
+                let params = new URLSearchParams(decodeURI(result['data'].split('?')[1]));
+                if (params.has('utm_content')) {
+                    UTM_CONTENT = params.get('utm_content');
+                    navigator.geolocation.getCurrentPosition(registerPoster, error, options);
+                } else {
+                    msg.innerText = "Error: this QR doesn't contain the 'utm_content' parametre, so it can't be registered."
+                }
             },
             {
                 /* your options or returnDetailedScanResult: true if you're not specifying any other options */
