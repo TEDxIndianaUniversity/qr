@@ -43,6 +43,12 @@
         h1 {
             margin-top: 0px;
         }
+        textarea {
+            width: calc(100% - 10px);
+            height: 200px;
+            font-size: 1.1em;
+            display: none;
+        }
     </style>
 </head>
 
@@ -75,8 +81,9 @@
     <h1>Activate Poster</h1>
     <p>Scan a TEDx poster to register the QR with <a href="https://www.tedxiu.com/p" target="_blank" rel="noopener">TEDx Analytical Services</a>. Camera & Geolocation permission is required to register a QR.</p>
     <video id="qr-scanner"></video>
+    <textarea name="location-description" id="location-description" placeholder="Describe the poster location (e.g. Luddy AI building, floor 2, above water fountain)"></textarea>
     <div class="status">
-
+        <p id="form-next-button" class="message-box tedx-button" onclick="submitTextarea()">Submit</p>
         <p id="status-box" class="message-box tedx-button no-arrow">
             Loading...
         </p>
@@ -96,13 +103,20 @@
 
         let UTM_CONTENT = "";
 
+        function submitTextarea() {
+            document.getElementById('location-description').style.display = 'none';
+            msg.innerText = "Registering..."
+            msg.style.display = "flex";
+            navigator.geolocation.getCurrentPosition(registerPoster, error, options);
+        }
+
         async function registerPoster(pos) {
             const crd = pos.coords;
             // console.log(`Accuracy: More or less ${crd.accuracy} meters.`);
             // console.log(`Poster id: ${UTM_CONTENT}`);
             const head = new Headers();
             // head.append("Content-Type", "application/json");
-            const desc = "TEST";
+            const desc = document.getElementById('location-description').value;
             const response = await fetch(`https://www.tedxiu.com/_functions/registerposter?poster=${UTM_CONTENT}&long=${crd.longitude}&lat=${crd.latitude}&desc=${desc}`, {
                 method: "POST",
                 headers: head
@@ -127,13 +141,11 @@
                 let params = new URLSearchParams(decodeURI(result['data'].split('?')[1]));
                 if (params.has('utm_content')) {
                     UTM_CONTENT = params.get('utm_content');
-                    msg.innerText = "Registering..."
-                    msg.style.display = "flex";
                     navigator.permissions.query({ name: "geolocation" }).then((result) => {
                         if (result.state === "granted") {
-                            navigator.geolocation.getCurrentPosition(registerPoster, error, options);
+                            document.getElementById('location-description').style.display = 'block';
                         } else if (result.state === "prompt") {
-                            navigator.geolocation.getCurrentPosition(registerPoster, error, options);
+                            document.getElementById('location-description').style.display = 'block';
                         } else {
                             msg.innerText = "Error: Geolocation permission is required to know where a poster is. Please adjust site and/or device settings to allow geolocation access."
                             msg.style.display = "flex";
