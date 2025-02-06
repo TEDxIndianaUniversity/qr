@@ -5,8 +5,12 @@
     <meta content="width=device-width, initial-scale=1" name="viewport" />
     <!-- <link href="https://assets.website-files.com/6246ac7990532afc2998139b/css/bulkr.61864f60c.css" rel="stylesheet" type="text/css" /> -->
     <style>
+        * {color-scheme: dark; font-family: 'Inter', 'Helvetica',sans-serif;}
         textarea { resize: vertical; }
         iframe {width: 70vw; height: 80vh}
+        .text-field-wrapper {margin-bottom: 10px;}
+        .tedx-button{ text-decoration: none; color: white; justify-content: center; align-items: center; gap: 10px; border-radius: 0.8rem; border: 2px solid rgba(97, 97, 97, 0.5); background: rgba(74, 74, 74, 0.5); width: max-content; height: max-content; padding: 10px 15px; &.more-padding{ width: 180px; height: 130px; @media screen and (max-width: 750px){ width: 200px!important; height: 60px!important; padding: 10px 5px!important;}} &.medium-padding{ width: 150px; height: 100px;} &:hover{ background: rgba(74, 74, 74, 0.7);} &:active{ background: #4a4a4a;} .button__label{ color: white; font-weight: 700; &::after{ display: inline-flex; position: relative; color: white; font-weight: 700; height: 100%; content: " \2192" / " "; padding: 0px 2.5px; align-items: center;}} &.arrow-up{ .button__label{ &::after{ margin-left: 5px; content: "\2191" / " ";}}} &.no-arrow{ .button__label{ &::after{ display: none; margin: 0; padding: 0; content: "";}}} &.red{ background: rgba(178, 57, 57, 0.75); border: 2px solid rgba(77, 24, 24, 0.5); &:hover{ background: rgba(178, 57, 57, 0.85);} &:active{ background: rgba(178, 57, 57, 1);}} &.white{ background: rgba(255, 255, 255, 1); border: 2px solid rgba(77, 24, 24, 0.5); .button__label{ color: black; &::after{ color: black;}} &:hover{ background: rgba(255, 255, 255, 0.85);} &:active{ background: rgba(255, 255, 255, 0.75);}}}
+        .submit-button-wrapper {margin: 25px 0;}
     </style>
 </head>
 
@@ -23,20 +27,33 @@
                 <form id="qr-form">
                     <div class="form-line">
                         <div class="text-field-wrapper">
-                            <label for="codeSize" class="field-label">Code size (pixels)</label>
-                            <input type="number" class="text-field w-input" min="40" id="codeSize" value="43"/>
+                            <label for="posterSelect" class="field-label">Poster Design: </label>
+                            <select name="posterSelect" id="poster-select">
+                                <option value="1">The Critical Moment - Tipping Point</option>
+                                <option value="2">Step into a New Era - Tipping Point</option>
+                                <option value="3">Tip the Scales - Tipping Point</option>
+                              </select>
                         </div>
                         <div class="text-field-wrapper">
-                            <label for="numberOfCodes" class="field-label">Quantity</label>
+                            <label for="prefixTxt" class="field-label">URL to Redirect to: </label>
+                            <input type="text" class="text-field w-input" id="prefixTxt" value="https://www.tedxiu.com"/>
+                        </div>
+                        
+                        <div class="text-field-wrapper">
+                            <label for="numberOfCodes" class="field-label">Quantity: </label>
                             <input type="number" class="text-field w-input" min="1" value="10" id="numberOfCodes" />
                         </div>
                         <div hidden class="text-field-wrapper">
                             <label for="file">(File Upload Currently Unsupported)</label>
                             <input type="file" id="file" name="file" accept=".svg,.png">
                         </div>
-                        
+                        <hr>
+                        <div class="text-field-wrapper">
+                            <label for="codeSize" class="field-label">QR size (px): </label>
+                            <input type="number" class="text-field w-input" min="40" id="codeSize" value="43"/>
+                        </div>
                         <div class="text-field-wrapper x-qr-field" onchange="generateQRcodes()">
-                            <label>X position:</label><br>
+                            <label>X position:</label>
                             <input id="horizontal" type="range" min="0" max="300" name="xQr" value="162">
                         </div>
                 
@@ -45,15 +62,14 @@
                             <input id="vertical" type="range" min="0" max="300" name="yQr" value="177">
                         </div>
 
-                        <div class="text-field-wrapper">
-                            <label for="prefixTxt" class="field-label">URL to Redirect to:</label>
-                            <input type="text" class="text-field w-input" id="prefixTxt" />
-                        </div>
                         <div hidden class="text-field-wrapper">
-                            <label for="inTxt" class="field-label">Code values</label>
+                            <label for="inTxt" class="field-label">Code values: </label>
                             <textarea id="inTxt" class="text-field area w-input" placeholder="Enter each text on a new line:"></textarea>
                         </div>
-                        <a href="#" class="button w-button" onclick="generateQRcodes()">Download QR-Codes</a>
+                        <hr>
+                        <div class="submit-button-wrapper">
+                            <a href="#" class="button w-button tedx-button" onclick="generateQRcodes()">Generate QR Codes</a>
+                        </div>
                     </div>
                     
                 </form>
@@ -97,6 +113,7 @@
             const qrXPosition = document.getElementById('horizontal').value;
             const qrYPosition = document.getElementById('vertical').value;
             const numberOfCodes = document.getElementById("numberOfCodes").value;
+            const posterSelection = document.getElementById('poster-select').value;
             let poster = document.getElementById("file").files[0];
             // const allText = document.getElementById("inTxt").value;
             // const codes = allText.match(/[^\n\r]+/g);
@@ -126,7 +143,7 @@
                 // poster.src = 'images/3.png';
                 var doc = new jsPDF();  
                 svg2png(qrcode.svg()).then((img) => {
-                    doc.addImage('images/3  .png', 'PNG', 2, 0, 212, 270);
+                    doc.addImage(`images/${posterSelection}.png`, 'PNG', 2, 0, 212, 270);
                     doc.addImage(img, 'JPEG', Number(qrXPosition), Number(qrYPosition), Number(width), Number(width));
                     doc.addPage('letter','p');
                     document.getElementById('preview').removeAttribute('srcdoc');
