@@ -52,7 +52,7 @@
         </div>
     </div>
     <div class="section grow wf-section">
-        <div class="container" style="display: flex; flex-direction: row;gap:15px;">
+        <div id="container" class="container" style="display: flex; flex-direction: row;gap:15px;">
             <div class="form w-form">
                 <form id="qr-form">
                     <div class="form-line">
@@ -190,7 +190,8 @@
                             width: "40%",
                             height: "600px"
                         }, newIframeEl);
-                        document.body.replaceChild(document.getElementById('preview'),newIframeEl);
+                        document.getElementById('preview').remove();
+                        document.getElementById('container').appendChild(newIframeEl);
                     }
                 });
             }
