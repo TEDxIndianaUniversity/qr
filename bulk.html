@@ -175,9 +175,9 @@
                     doc.addImage(`images/${posterSelection}.png`, 'PNG', 2, 0, 212, 270);
                     doc.addImage(img, 'JPEG', Number(qrXPosition), Number(qrYPosition), Number(width), Number(width));
                     doc.addPage('letter','p');
-                }).then(() => {
-                    document.getElementById('preview').src = doc.output('bloburi');
-                });
+                    var pageCount = doc.internal.getNumberOfPages();
+                    if (pageCount >= numberOfCodes) document.getElementById('preview').src = doc.output('bloburi');
+                })
             }
             
         }
