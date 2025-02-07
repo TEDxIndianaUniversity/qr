@@ -177,10 +177,19 @@
                     doc.addPage('letter','p');
                     // document.getElementById('preview').removeAttribute('srcdoc');
                     document.getElementById('preview').src = doc.output('bloburi');
-                    let safariAgent = userAgentString.indexOf("Safari") > -1; 
+                    let safariAgent = navigator.userAgent.toString().indexOf("Safari") > -1; 
                     if ((chromeAgent) && (safariAgent)) safariAgent = false; 
                     if (safariAgent) {
-                        let newWindow = window.open('/'); newWindow.onload = () => { newWindow.location = doc.output('bloburi'); };
+                        const newIframeEl = document.createElement('iframe');
+                        Object.assign({
+                            id: "preview",
+                            class: "preview",
+                            title: "Poster Preview",
+                            src: doc.output('bloburi'),
+                            width: "40%",
+                            height: "600px"
+                        }, newIframeEl);
+                        document.body.replaceChild(document.getElementById('preview'),newIframeEl);
                     }
                 });
             }
