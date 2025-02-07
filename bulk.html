@@ -180,8 +180,16 @@
                     let safariAgent = userAgentString.indexOf("Safari") > -1; 
                     if ((chromeAgent) && (safariAgent)) safariAgent = false; 
                     if (safariAgent) {
-                        document.getElementById('preview').style.display = "none";
-                        document.getElementById('preview').style.display = "block";
+                        const newIframeEl = document.createElement('iframe');
+                        Object.assign({
+                            id: "preview",
+                            class: "preview",
+                            title: "Poster Preview",
+                            src: doc.output('bloburi'),
+                            width: "40%",
+                            height: "600px"
+                        }, newIframeEl);
+                        document.body.replaceChild(document.getElementById('preview'),newIframeEl);
                     }
                 });
             }
