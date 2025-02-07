@@ -122,6 +122,7 @@
                 method: "POST",
                 headers: head
             }).then((json) => {
+                UTM_CONTENT = "";
                 msg.innerText = "Registered Successfully :) "
                 msg.classList.add('success');
                 msg.style.display = "flex";
