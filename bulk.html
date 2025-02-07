@@ -177,6 +177,12 @@
                     doc.addPage('letter','p');
                     // document.getElementById('preview').removeAttribute('srcdoc');
                     document.getElementById('preview').src = doc.output('bloburi');
+                    let safariAgent = userAgentString.indexOf("Safari") > -1; 
+                    if ((chromeAgent) && (safariAgent)) safariAgent = false; 
+                    if (safariAgent) {
+                        document.getElementById('preview').style.display = "none";
+                        document.getElementById('preview').style.display = "block";
+                    }
                 });
             }
             
