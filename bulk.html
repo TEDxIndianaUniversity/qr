@@ -175,24 +175,8 @@
                     doc.addImage(`images/${posterSelection}.png`, 'PNG', 2, 0, 212, 270);
                     doc.addImage(img, 'JPEG', Number(qrXPosition), Number(qrYPosition), Number(width), Number(width));
                     doc.addPage('letter','p');
-                    // document.getElementById('preview').removeAttribute('srcdoc');
+                }).then(() => {
                     document.getElementById('preview').src = doc.output('bloburi');
-                    let safariAgent = navigator.userAgent.toString().indexOf("Safari") > -1; 
-                    let chromeAgent = navigator.userAgent.toString().indexOf("Chrome") > -1; 
-                    if ((chromeAgent) && (safariAgent)) safariAgent = false; 
-                    if (safariAgent) {
-                        const newIframeEl = document.createElement('iframe');
-                        Object.assign({
-                            id: "preview",
-                            class: "preview",
-                            title: "Poster Preview",
-                            src: doc.output('bloburi'),
-                            width: "40%",
-                            height: "600px"
-                        }, newIframeEl);
-                        document.getElementById('preview').remove();
-                        document.getElementById('container').appendChild(newIframeEl);
-                    }
                 });
             }
             
