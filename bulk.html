@@ -178,6 +178,7 @@
                     // document.getElementById('preview').removeAttribute('srcdoc');
                     document.getElementById('preview').src = doc.output('bloburi');
                     let safariAgent = navigator.userAgent.toString().indexOf("Safari") > -1; 
+                    let chromeAgent = navigator.userAgent.toString().indexOf("Chrome") > -1; 
                     if ((chromeAgent) && (safariAgent)) safariAgent = false; 
                     if (safariAgent) {
                         const newIframeEl = document.createElement('iframe');
