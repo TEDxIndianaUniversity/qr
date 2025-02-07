@@ -135,7 +135,7 @@
         }
         function generateQRcodes() {
             document.getElementById('preview').removeAttribute('src');
-            document.getElementById('preview').srcdoc = `<!DOCTYPE html><p>Loading...</p></html>`;
+            // document.getElementById('preview').srcdoc = `<!DOCTYPE html><p>Loading...</p></html>`;
             const prefix = document.getElementById("prefixTxt").value;
             const width = document.getElementById("codeSize").value;
             const height = width;
@@ -175,7 +175,7 @@
                     doc.addImage(`images/${posterSelection}.png`, 'PNG', 2, 0, 212, 270);
                     doc.addImage(img, 'JPEG', Number(qrXPosition), Number(qrYPosition), Number(width), Number(width));
                     doc.addPage('letter','p');
-                    document.getElementById('preview').removeAttribute('srcdoc');
+                    // document.getElementById('preview').removeAttribute('srcdoc');
                     document.getElementById('preview').src = doc.output('bloburi');
                 });
             }
